@@ -17,7 +17,7 @@ but yeah, because of all that it's not the fastest CSS-in-JS library out there.
 
 ## Usage
 
-flcss will work with any web framework that allows you set elements' class name.
+flcss will work with any web framework that allows you to set class names.
 
 ```jsx
 import React from 'react';
