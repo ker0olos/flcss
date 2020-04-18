@@ -7,7 +7,7 @@ A very bad implementation of CSS-in-JS.
 
 But it supports all of the things like selectors, pseudo-classes, pseudo-elements, attributes, vendor prefixes.
 
-It also has some custom features like extending but properly is one of the slowest implementations of CSS-IN-JS.
+It also has some custom features like extending but properly is one of the slowest implementations of CSS-in-JS.
 
 but yeah, because of all that it's not the fastest CSS-in-JS library out there.
 
