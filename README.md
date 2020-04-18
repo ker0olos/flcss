@@ -13,7 +13,7 @@ but yeah, because of all that it's not the fastest CSS-in-JS library out there.
 
 ## Installation
 
-npm install --save-dev flcss`
+`npm install --save-dev flcss`
 
 ## Usage
 
