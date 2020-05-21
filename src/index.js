@@ -118,28 +118,36 @@ function handleStyle(key, obj, rootDirectory, rootStylesheet, nest)
   // loop though the rules
   Object.keys(obj).forEach((rule, i) =>
   {
-    // extent support
+    // extend support
     if (rule === 'extend' && rootStylesheet)
     {
-      if (!Array.isArray(values[i]))
-        values[i] = [ values[i] ];
-      
-      values[i].forEach((v) =>
-      {
-        const originalClassnames = rootDirectory[v];
+      const v = values[i];
 
-        // eslint-disable-next-line security/detect-non-literal-regexp
-        rootStylesheet[v] = rootStylesheet[v].replace(new RegExp(`${originalClassnames}.*?{`, 'g'), (s) =>
+      const originalClassName = rootDirectory[v];
+
+      // eslint-disable-next-line security/detect-non-literal-regexp
+      rootStylesheet[v] = rootStylesheet[v].replace(new RegExp(`${originalClassName}.*?({|,)`, 'g'), (s) =>
+      {
+        if (s.endsWith('{'))
         {
-          const add = s.replace(originalClassnames, '').replace('{', '');
-          
-          return `${originalClassnames}${add}, .${className}${add}{`;
-        });
+          const add = s.replace(originalClassName, '').replace('{', '');
+
+          return `${originalClassName}${add},.${className}${add}{`;
+        }
+        else
+        {
+          const add = s.replace(originalClassName, '').replace(',', '');
+
+          return `${originalClassName}${add},.${className}${add},`;
+        }
       });
+
+      console.log(rootStylesheet[v]);
     }
+    // TODO document this feature
     else if (rule.includes('%this'))
     {
-      const nextParent = `${rule.replace('%this', `.${className}`)}`;
+      const nextParent = rule.replace('%this', `.${className}`);
 
       additionalCss = additionalCss + `${nextParent}${handleStyle(rule, values[i], rootDirectory, rootStylesheet, nextParent)}`;
     }
@@ -172,7 +180,7 @@ function handleStyle(key, obj, rootDirectory, rootStylesheet, nest)
     // at-rule selector
     else if (rule.startsWith('@'))
     {
-      const nextParent = `${className}`;
+      const nextParent = className;
       
       additionalCss = additionalCss + `${rule}{.${nextParent}${handleStyle(rule, values[i], rootDirectory, rootStylesheet, nextParent)}}`;
     }
@@ -189,7 +197,7 @@ function handleStyle(key, obj, rootDirectory, rootStylesheet, nest)
         const noCaps = rule.replace(camelRegex, (c) => `-${c.toLowerCase()}`);
     
         // add the rule name and the value to the class css string
-        css = css + `${noCaps}: ${values[i]};`;
+        css = css + `${noCaps}:${values[i]};`;
       }
     }
     else

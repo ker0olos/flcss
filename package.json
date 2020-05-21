@@ -1,6 +1,6 @@
 {
   "name": "flcss",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A bad attempt at CSS-in-JS",
   "main": "build/index.js",
   "scripts": {
