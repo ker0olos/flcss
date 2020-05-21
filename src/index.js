@@ -141,8 +141,6 @@ function handleStyle(key, obj, rootDirectory, rootStylesheet, nest)
           return `${originalClassName}${add},.${className}${add},`;
         }
       });
-
-      console.log(rootStylesheet[v]);
     }
     // TODO document this feature
     else if (rule.includes('%this'))
