@@ -1,16 +1,16 @@
 {
   "name": "flcss",
-  "version": "0.1.3",
+  "version": "0.1.2",
   "description": "A bad attempt at CSS-in-JS",
   "main": "build/index.js",
   "scripts": {
     "prepare": "npm run build",
-    "postpublish": "npm version patch --no-git",
+    "prepublishOnly": "npm version patch",
     "build": "rm -rf ./build && mkdir ./build && babel -d ./build ./src"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ItsKerolos/flcss.git"
+    "url": "git+https://github.com/ker0olos/flcss.git"
   },
   "keywords": [
     "css-in-js"
@@ -18,9 +18,9 @@
   "author": "Kerolos Zaki",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ItsKerolos/flcss/issues"
+    "url": "https://github.com/ker0olos/flcss/issues"
   },
-  "homepage": "https://github.com/ItsKerolos/flcss#readme",
+  "homepage": "https://github.com/ker0olos/flcss#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
