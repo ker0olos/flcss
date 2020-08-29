@@ -8,11 +8,11 @@ import { StyleSheet, Animation } from './types';
 // but flcss will be used everywhere
 require('construct-style-sheets-polyfill');
 
-const globalStyleSheet = new CSSStyleSheet();
+const universalStyleSheet = new CSSStyleSheet();
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-document.adoptedStyleSheets = [ ...document.adoptedStyleSheets, globalStyleSheet ];
+document.adoptedStyleSheets = [ ...document.adoptedStyleSheets, universalStyleSheet ];
 
 function isValue(obj: unknown)
 {
@@ -33,7 +33,10 @@ function processRule(rule: string): string
 
 function random() : string
 {
-  return Math.random().toString(36).substr(2, 7);
+  if (process.env.NODE_ENV !== 'test')
+    return Math.random().toString(36).substr(2, 7);
+  else
+    return 'test';
 }
 
 export function createAnimation(animation: Animation) : string
@@ -70,7 +73,7 @@ export function createAnimation(animation: Animation) : string
     keyframes.push(`${key} { ${rulesList.join('; ')}; }`);
   }
 
-  toStyleSheet(`@keyframes ${animationName}`, keyframes.join(''));
+  toStyleSheet(`@keyframes ${animationName}`, keyframes.join(' '));
 
   if (animation.duration || animation.timingFunction || animation.delay || animation.iterationCount || animation.direction || animation.fillMode)
     return `${animationName} ${duration} ${timingFunction} ${delay} ${iterationCount} ${direction} ${fillMode}`;
@@ -178,11 +181,11 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
     {
       const split = selector.split('@');
 
-      toStyleSheet(`@${split[1]}`, `${split[0]} { ${rulesList.join(';')} }`);
+      toStyleSheet(`@${split[1]}`, `${split[0]} { ${rulesList.join('; ')}; }`);
     }
     else
     {
-      toStyleSheet(selector, rulesList.join(';'));
+      toStyleSheet(selector, `${rulesList.join('; ')};`);
     }
   }
 
@@ -191,5 +194,5 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
 
 function toStyleSheet(selector: string, style: string)
 {
-  return globalStyleSheet.addRule(selector, style);
+  return universalStyleSheet.addRule(selector, style);
 }

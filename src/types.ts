@@ -139,7 +139,7 @@ export type StyleSheet = {
   [key: string]: FlcssProperties | StyleSheet
 }
 
-export interface Animation {
+export type Animation = {
   keyframes: Keyframes;
   timingFunction?: CSS.Property.AnimationTimingFunction
   delay?: CSS.Property.AnimationDelay

@@ -4,6 +4,8 @@
 .todo
 .eslint*
 
-babel.config.js
+jest.config.js
 
+coverage
 src
+test
