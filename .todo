@@ -1,0 +1,7 @@
+Performance Issues and Bugs:
+  ☐ test code on firefox since it does not support Constructed Stylesheets
+
+API:
+  ☐ design an API to allow updating the styles
+
+Documentation:
