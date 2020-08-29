@@ -22,7 +22,7 @@ It also comes with custom features like extending.
 
 ## Installation
 
-`npm install --save-dev flcss`
+`npm install flcss`
 
 ## Usage
 

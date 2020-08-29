@@ -2,8 +2,6 @@
 
 import { StyleSheet, Animation } from './types';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 // polyfill construct stylesheets because it's not everywhere
 // but flcss will be used everywhere
 require('construct-style-sheets-polyfill');

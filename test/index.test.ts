@@ -1,5 +1,3 @@
-/* eslint-disable no-global-assign */
-
 jest.mock('construct-style-sheets-polyfill', () => undefined);
 
 const stylesheet = {
