@@ -2,10 +2,6 @@ import * as CSS from 'csstype';
 
 type CSSProperties = CSS.Properties<string, number>;
 
-interface FlcssProperties extends CSSProperties, Pseudos {
-  extend?: string
-}
-
 type Pseudos = Partial<{
   ':-moz-any()': CSSProperties
   ':-moz-dir': CSSProperties
@@ -135,8 +131,18 @@ type Pseudos = Partial<{
 //   '@viewport': FlcssProperties
 // }>
 
+export interface FlcssProperties extends CSSProperties, Pseudos {
+  extend?: string
+}
+
 export type StyleSheet = {
   [key: string]: FlcssProperties | StyleSheet
+}
+
+type Keyframes = {
+  [key: string]: CSSProperties
+  'from'?: CSSProperties
+  'to'?: CSSProperties
 }
 
 export type Animation = {
@@ -147,10 +153,4 @@ export type Animation = {
   duration?: CSS.Property.AnimationDuration
   direction?: CSS.Property.AnimationDirection
   fillMode?: CSS.Property.AnimationFillMode
-}
-
-type Keyframes = {
-  [key: string]: CSSProperties
-  'from'?: CSSProperties
-  'to'?: CSSProperties
 }

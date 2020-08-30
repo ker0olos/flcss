@@ -1,6 +1,6 @@
 /* eslint-disable security/detect-object-injection */
 
-import { StyleSheet, Animation } from './types';
+import { FlcssProperties, StyleSheet, Animation } from './types';
 
 // polyfill construct stylesheets because it's not everywhere
 // but flcss will be used everywhere
@@ -17,6 +17,15 @@ function isValue(obj: unknown)
   return (typeof obj === 'string' || typeof obj === 'number');
 }
 
+function random() : string
+{
+  /* istanbul ignore next */
+  if (process.env.NODE_ENV !== 'test')
+    return Math.random().toString(36).substr(2, 7);
+  else
+    return 'test';
+}
+
 function processRule(rule: string): string
 {
   // correct vender prefixes
@@ -27,14 +36,6 @@ function processRule(rule: string): string
   rule = rule.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
   
   return rule;
-}
-
-function random() : string
-{
-  if (process.env.NODE_ENV !== 'test')
-    return Math.random().toString(36).substr(2, 7);
-  else
-    return 'test';
 }
 
 export function createAnimation(animation: Animation) : string
@@ -85,44 +86,57 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
 
   const keys = Object.keys(styles);
 
-  const orgLength = keys.length;
-  
   for (let i = 0; i < keys.length; i++)
   {
-    const rulesList = [];
-    
     const key = keys[i];
 
     let item = styles[key];
     
-    let selector = key;
+    let className = key;
 
-    // if an original item
-    // not a nested item
-    if (i < orgLength)
+    // key must be a possible classnames
+    if (!key.match('^[A-z]'))
+      throw new Error(`Error: ${key} is not a valid classname`);
+
+    // create a class name using the original class name as a prefix and a random characters
+    // & return generated classnames
+    classNames[key] = className = `flcss-${key}-${random()}`;
+
+    // handle extending
+    if (typeof item['extend'] === 'string')
     {
-      // original items must be possible classnames
-      if (!key.match('^[A-z]'))
-        return;
+      const extendKey = item['extend'];
 
-      // create a class name using the original class name as a prefix and a random characters
-      selector = `.flcss-${key}-${random()}`;
+      // delete rule
+      delete item['extend'];
 
-      // return generated classnames
-      classNames[key] = selector.substr(1);
-
-      // handle extending
-      if (typeof item['extend'] === 'string')
-      {
-        const key = item['extend'];
-
-        // delete rule
-        delete item['extend'];
-
-        if (styles[key])
-          item = { ...styles[key], ...item };
-      }
+      if (styles[extendKey])
+        item = { ...styles[extendKey], ...item };
+      else
+        throw new Error(`Error: can't extend ${key} with ${extendKey} because ${extendKey} does not exists`);
     }
+
+    setStyle(className, item);
+  }
+
+  return classNames as T;
+}
+
+export function setStyle(className: string, style: StyleSheet | FlcssProperties) : void
+{
+  const selector = `.${className}`;
+
+  const obj = { [selector]: style };
+
+  const keys = Object.keys(obj);
+
+  for (let i = 0; i < keys.length; i++)
+  {
+    const key = keys[i];
+
+    const item = obj[key];
+
+    const rulesList = [];
 
     for (let rule in item)
     {
@@ -131,31 +145,27 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
       // rule is probably a nested object
       if (!isValue(value))
       {
-        // value in undefined
-        if (!value)
-          continue;
-        
         // handle at-rules
         if (rule.startsWith('@'))
         {
-          rule = selector + rule;
+          rule = key + rule;
         }
         else
         {
           // handle appending classnames
           
-          const split = selector.split('@');
+          const split = key.split('@');
 
           // appending inside at-rule wrappers
           if (split.length > 1)
             rule = split[0] + rule + '@' + split[1];
           else
-            rule = selector + rule;
+            rule = key + rule;
         }
   
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        styles[rule] = value;
+        obj[rule] = value;
 
         keys.push(rule);
       }
@@ -175,19 +185,17 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
       continue;
 
     // handle at-rule wrappers
-    if (selector.includes('@'))
+    if (key.includes('@'))
     {
-      const split = selector.split('@');
+      const split = key.split('@');
 
       toStyleSheet(`@${split[1]}`, `${split[0]} { ${rulesList.join('; ')}; }`);
     }
     else
     {
-      toStyleSheet(selector, `${rulesList.join('; ')};`);
+      toStyleSheet(key, `${rulesList.join('; ')};`);
     }
   }
-
-  return classNames as T;
 }
 
 function toStyleSheet(selector: string, style: string)

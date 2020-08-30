@@ -164,9 +164,9 @@ test('Creating Extended Styles', () =>
   expect(stylesheet.addRule).toHaveBeenCalledTimes(4);
 
   expect(stylesheet.addRule).toHaveBeenNthCalledWith(1, '.flcss-red-test', 'width: 100px; height: 100px; background-color: red;');
-  expect(stylesheet.addRule).toHaveBeenNthCalledWith(2, '.flcss-blue-test', 'width: 100px; height: 100px; background-color: blue;');
-
-  expect(stylesheet.addRule).toHaveBeenNthCalledWith(3, '.flcss-red-test:hover', 'background-color: black;');
+  expect(stylesheet.addRule).toHaveBeenNthCalledWith(2, '.flcss-red-test:hover', 'background-color: black;');
+  
+  expect(stylesheet.addRule).toHaveBeenNthCalledWith(3, '.flcss-blue-test', 'width: 100px; height: 100px; background-color: blue;');
   expect(stylesheet.addRule).toHaveBeenNthCalledWith(4, '.flcss-blue-test:hover', 'background-color: black;');
 });
 
@@ -228,4 +228,44 @@ test('Creating Animations With Properties', () =>
   expect(stylesheet.addRule).toHaveBeenCalledTimes(1);
 
   expect(stylesheet.addRule).toHaveBeenNthCalledWith(1, '@keyframes flcss-animation-test', 'from { top: 0px; } 50% { top: 50px; } to { top: 200px; }');
+});
+
+test('Invalid Classnames', () =>
+{
+  expect(() => createStyle({
+    '#': {
+      width: '100%',
+      height: '100%'
+    }
+  })).toThrowError('Error: # is not a valid classname');
+});
+
+test('Invalid Extend', () =>
+{
+  expect(() => createStyle({
+    red: {
+      backgroundColor: 'red'
+    },
+    blue: {
+      extend: 'yellow',
+      backgroundColor: 'blue'
+    }
+  })).toThrowError('Error: can\'t extend blue with yellow because yellow does not exists');
+});
+
+test('Skipping Empty Styles', () =>
+{
+  const styles = createStyle({
+    container: {}
+  });
+
+  // return values
+
+  expect(Object.keys(styles).length).toBe(1);
+  
+  expect(styles.container).toEqual('flcss-container-test');
+
+  // generated styles
+
+  expect(stylesheet.addRule).toHaveBeenCalledTimes(0);
 });

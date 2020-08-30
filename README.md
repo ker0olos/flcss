@@ -1,16 +1,19 @@
-![npm (tag)](https://img.shields.io/npm/v/flcss/latest) ![test](https://github.com/ker0olos/flcss/workflows/test/badge.svg?branch=master) 
+[![npm (tag)](https://img.shields.io/npm/v/flcss/latest)](http://npmjs.com/package/flcss)
+![test](https://github.com/ker0olos/flcss/workflows/test/badge.svg?branch=master) 
 [![codecov](https://codecov.io/gh/ker0olos/flcss/branch/master/graph/badge.svg)](https://codecov.io/gh/ker0olos/flcss)
 
 ### CHANGES IN v2.0.0
   - this is a full re-write of FLCSS.
   - much less code means faster performance (probably).
+  - slightly better error handling.
   - types are everywhere so writing styles should be much faster in vscode with suggestions and auto-completion.
   - switched to using constructed stylesheets underneath (when it's available).
+  - added `setStyle()` to update generated styles or set styles with fixed classnames.
 
 ### BREAKING CHANGES IN v2.0.0
- - createAnimation()'s keyframes was changed to use objects like createStyles() instead of very long strings (because it's CSS-in-JS not Strings-in-JS).
+ - `createAnimation()` keyframes was changed to use objects like `createStyle()` instead of very long strings (because it's CSS-in-JS not Strings-in-JS).
  
- - support for replacing '%this' with generated classname was removed to keep things simple.
+ - support for replacing `'%this'` with generated classnames was removed.
 
 <br>
 
