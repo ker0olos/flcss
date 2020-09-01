@@ -2,15 +2,17 @@
 
 import { FlcssProperties, StyleSheet, Animation } from './types';
 
-// polyfill construct stylesheets because it's not everywhere
-// but flcss will be used everywhere
+// polyfill construct stylesheets
 require('construct-style-sheets-polyfill');
 
 const universalStyleSheet = new CSSStyleSheet();
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-document.adoptedStyleSheets = [ ...document.adoptedStyleSheets, universalStyleSheet ];
+window.addEventListener('DOMContentLoaded', () =>
+{
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  document.adoptedStyleSheets = [ universalStyleSheet ];
+});
 
 function isValue(obj: unknown)
 {
@@ -26,16 +28,97 @@ function random() : string
     return 'test';
 }
 
-function processRule(rule: string): string
+function processProperty(property: string): string
 {
   // correct vender prefixes
-  if (rule.substr(0, 1) === rule.substr(0, 1).toUpperCase())
-    rule = `-${rule.substr(0, 1).toLowerCase()}${rule.substr(1)}`;
+  if (property.substr(0, 1) === property.substr(0, 1).toUpperCase())
+    property = `-${property.substr(0, 1).toLowerCase()}${property.substr(1)}`;
 
   // transform camelCase to no-caps
-  rule = rule.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+  property = property.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
   
-  return rule;
+  return property;
+}
+
+function parse(selector: string, style: StyleSheet | FlcssProperties)
+{
+  const obj = { [selector]: style };
+
+  const keys = Object.keys(obj);
+
+  const rules : { selector: string, block: string, declarations: { property: string, value: string }[] }[] = [];
+
+  for (let i = 0; i < keys.length; i++)
+  {
+    const key = keys[i];
+
+    const rule = obj[key];
+
+    const declarationsList : { property: string, value: string }[] = [];
+
+    for (let property in rule)
+    {
+      const value = rule[property];
+
+      // rule is probably a nested object
+      if (!isValue(value))
+      {
+        // handle at-rules
+        if (property.startsWith('@'))
+        {
+          property = key + property;
+        }
+        else
+        {
+          // handle appending classnames
+          
+          const split = key.split('@');
+
+          // appending inside at-rule wrappers
+          if (split.length > 1)
+            property = split[0] + property + '@' + split[1];
+          else
+            property = key + property;
+        }
+  
+        obj[property] = value;
+
+        keys.push(property);
+      }
+      // add the rule
+      else
+      {
+        // corrects vender prefixes and
+        // transform camelCase to no-caps
+        property = processProperty(property);
+  
+        declarationsList.push({ property, value });
+      }
+    }
+
+    // item has no rules
+    if (declarationsList.length <= 0)
+      continue;
+
+    const block =
+      declarationsList
+        .map(declaration => `${declaration.property}: ${declaration.value}`)
+        .join('; ') + ';';
+    
+    // handle at-rule wrappers
+    if (key.includes('@'))
+    {
+      const split = key.split('@');
+
+      rules.push({ selector: `@${split[1]}`, block: `${split[0]} { ${block} }`, declarations: declarationsList });
+    }
+    else
+    {
+      rules.push({ selector: key, block, declarations: declarationsList });
+    }
+  }
+
+  return rules;
 }
 
 export function createAnimation(animation: Animation) : string
@@ -54,25 +137,25 @@ export function createAnimation(animation: Animation) : string
 
   for (const key in animation.keyframes)
   {
-    const rulesList = [];
+    const declarationsList = [];
     
     const item = animation.keyframes[key];
 
-    for (let rule in item)
+    for (let property in item)
     {
-      const value = item[rule];
+      const value = item[property];
 
       // corrects vender prefixes and
       // transform camelCase to no-caps
-      rule = processRule(rule);
+      property = processProperty(property);
 
-      rulesList.push(`${rule}: ${value}`);
+      declarationsList.push(`${property}: ${value}`);
     }
 
-    keyframes.push(`${key} { ${rulesList.join('; ')}; }`);
+    keyframes.push(`${key} { ${declarationsList.join('; ')}; }`);
   }
 
-  toStyleSheet(`@keyframes ${animationName}`, keyframes.join(' '));
+  addToStyleSheet(`@keyframes ${animationName}`, keyframes.join(' '));
 
   if (animation.duration || animation.timingFunction || animation.delay || animation.iterationCount || animation.direction || animation.fillMode)
     return `${animationName} ${duration} ${timingFunction} ${delay} ${iterationCount} ${direction} ${fillMode}`;
@@ -90,7 +173,7 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
   {
     const key = keys[i];
 
-    let item = styles[key];
+    let rule = styles[key];
     
     let className = key;
 
@@ -100,105 +183,120 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
 
     // create a class name using the original class name as a prefix and a random characters
     // & return generated classnames
-    classNames[key] = className = `flcss-${key}-${random()}`;
+    classNames[key] = `flcss-${key}-${random()}`;
+
+    className = `.${classNames[key]}`;
 
     // handle extending
-    if (typeof item['extend'] === 'string')
+    if (typeof rule['extend'] === 'string')
     {
-      const extendKey = item['extend'];
+      const extendKey = rule['extend'];
 
-      // delete rule
-      delete item['extend'];
+      // delete extend property
+      delete rule['extend'];
 
       if (styles[extendKey])
-        item = { ...styles[extendKey], ...item };
+        rule = { ...styles[extendKey], ...rule };
       else
         throw new Error(`Error: can't extend ${key} with ${extendKey} because ${extendKey} does not exists`);
     }
 
-    setStyle(className, item);
+    setStyle(className, rule);
   }
 
   return classNames as T;
 }
 
-export function setStyle(className: string, style: StyleSheet | FlcssProperties) : void
+export function setStyle(selector: string, style: StyleSheet | FlcssProperties) : void
 {
-  const selector = `.${className}`;
+  const rules = parse(selector, style);
 
-  const obj = { [selector]: style };
+  rules.forEach(rule => addToStyleSheet(rule.selector, rule.block));
+}
 
-  const keys = Object.keys(obj);
+export function updateStyle(classname: string, style: StyleSheet | FlcssProperties) : void
+{
+  const parsedRules = parse(`.${classname}`, style);
 
-  for (let i = 0; i < keys.length; i++)
+  if (parsedRules.length <= 0)
+    return;
+  
+  const existingRules : { [key: string]: { index: number, media?: CSSMediaRule, item: CSSRule } } = {};
+
+  for (let index = 0; index < universalStyleSheet.cssRules.length; index++)
   {
-    const key = keys[i];
+    const item = universalStyleSheet.cssRules.item(index);
 
-    const item = obj[key];
-
-    const rulesList = [];
-
-    for (let rule in item)
+    if (item instanceof CSSMediaRule)
     {
-      const value = item[rule];
-
-      // rule is probably a nested object
-      if (!isValue(value))
-      {
-        // handle at-rules
-        if (rule.startsWith('@'))
-        {
-          rule = key + rule;
-        }
-        else
-        {
-          // handle appending classnames
-          
-          const split = key.split('@');
-
-          // appending inside at-rule wrappers
-          if (split.length > 1)
-            rule = split[0] + rule + '@' + split[1];
-          else
-            rule = key + rule;
-        }
-  
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        obj[rule] = value;
-
-        keys.push(rule);
-      }
-      // add the rule
-      else
-      {
-        // corrects vender prefixes and
-        // transform camelCase to no-caps
-        rule = processRule(rule);
-  
-        rulesList.push(`${rule}: ${value}`);
-      }
-    }
-
-    // item has no rules
-    if (rulesList.length <= 0)
-      continue;
-
-    // handle at-rule wrappers
-    if (key.includes('@'))
-    {
-      const split = key.split('@');
-
-      toStyleSheet(`@${split[1]}`, `${split[0]} { ${rulesList.join('; ')}; }`);
+      existingRules[`@media ${item.media.mediaText}`] = { index, media: item, item: item.cssRules[0] };
     }
     else
     {
-      toStyleSheet(key, `${rulesList.join('; ')};`);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      existingRules[item.selectorText] = { index, item };
+    }
+  }
+
+  for (const { selector, declarations, block } of parsedRules)
+  {
+    if (!existingRules[selector])
+    {
+      // add it to the stylesheet
+      addToStyleSheet(selector, block);
+    }
+    // but if it exists. update it
+    else
+    {
+      const { item, media, index } = existingRules[selector];
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      const styleMap = item.styleMap;
+
+      declarations.forEach((declaration) =>
+      {
+        // if browser support CSS Type OM Level 1
+        if (styleMap)
+          styleMap.set(declaration.property, declaration.value);
+        else
+          // if browser does not support CSS Type OM Level 1
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          // this should change the value of item.cssText which
+          // is used later to replace the rule with the new one
+          item.style[declaration.property] = declaration.value;
+      });
+
+      // if browser does not support CSS Type OM Level 1
+      // this is polyfilled by replacing the entire rule
+      if (!styleMap)
+      {
+        removeFromStyleSheet(index);
+
+        let block = item.cssText;
+
+        if (!media)
+        {
+          block = block.replace(selector, '');
+
+          block = block.substr(block.indexOf('{') + 1);
+          block = block.substr(0, block.lastIndexOf('}'));
+        }
+
+        addToStyleSheet(selector, block);
+      }
     }
   }
 }
 
-function toStyleSheet(selector: string, style: string)
+function addToStyleSheet(selector: string, style: string)
 {
   return universalStyleSheet.addRule(selector, style);
+}
+
+function removeFromStyleSheet(index: number)
+{
+  return universalStyleSheet.removeRule(index);
 }
