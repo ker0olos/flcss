@@ -4,7 +4,7 @@
 
 ### CHANGES IN v2.0.0
   - this is a full re-write of FLCSS.
-  - much less code means faster performance (probably).
+  - less code means faster performance (probably).
   - slightly better error handling.
   - types are everywhere so writing styles should be much faster in vscode with suggestions and auto-completion.
   - switched to using constructed stylesheets underneath (when it's available).

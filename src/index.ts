@@ -7,6 +7,7 @@ require('construct-style-sheets-polyfill');
 
 const universalStyleSheet = new CSSStyleSheet();
 
+// istanbul ignore next
 window.addEventListener('DOMContentLoaded', () =>
 {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -21,7 +22,7 @@ function isValue(obj: unknown)
 
 function random() : string
 {
-  /* istanbul ignore next */
+  // istanbul ignore next
   if (process.env.NODE_ENV !== 'test')
     return Math.random().toString(36).substr(2, 7);
   else
@@ -38,6 +39,48 @@ function processProperty(property: string): string
   property = property.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
   
   return property;
+}
+
+export function createAnimation(animation: Animation) : string
+{
+  const duration = animation.duration ?? '0s';
+  const timingFunction = animation.timingFunction ?? 'ease';
+  const delay = animation.delay ?? '0s';
+  const iterationCount = animation.iterationCount ?? '1';
+  const direction = animation.direction ?? 'normal';
+  const fillMode = animation.fillMode ?? 'none';
+
+  // generate a random name for the animation
+  const animationName = `flcss-animation-${random()}`;
+
+  const keyframes = [];
+
+  for (const key in animation.keyframes)
+  {
+    const declarationsList = [];
+    
+    const item = animation.keyframes[key];
+
+    for (let property in item)
+    {
+      const value = item[property];
+
+      // corrects vender prefixes and
+      // transform camelCase to no-caps
+      property = processProperty(property);
+
+      declarationsList.push(`${property}: ${value}`);
+    }
+
+    keyframes.push(`${key} { ${declarationsList.join('; ')}; }`);
+  }
+
+  addToStyleSheet(`@keyframes ${animationName}`, keyframes.join(' '));
+
+  if (animation.duration || animation.timingFunction || animation.delay || animation.iterationCount || animation.direction || animation.fillMode)
+    return `${animationName} ${duration} ${timingFunction} ${delay} ${iterationCount} ${direction} ${fillMode}`;
+  else
+    return animationName;
 }
 
 function parse(selector: string, style: StyleSheet | FlcssProperties)
@@ -66,6 +109,10 @@ function parse(selector: string, style: StyleSheet | FlcssProperties)
         // handle at-rules
         if (property.startsWith('@'))
         {
+          // only support at-media
+          if (!property.startsWith('@media'))
+            continue;
+          
           property = key + property;
         }
         else
@@ -121,49 +168,7 @@ function parse(selector: string, style: StyleSheet | FlcssProperties)
   return rules;
 }
 
-export function createAnimation(animation: Animation) : string
-{
-  const duration = animation.duration ?? '0s';
-  const timingFunction = animation.timingFunction ?? 'ease';
-  const delay = animation.delay ?? '0s';
-  const iterationCount = animation.iterationCount ?? '1';
-  const direction = animation.direction ?? 'normal';
-  const fillMode = animation.fillMode ?? 'none';
-
-  // generate a random name for the animation
-  const animationName = `flcss-animation-${random()}`;
-
-  const keyframes = [];
-
-  for (const key in animation.keyframes)
-  {
-    const declarationsList = [];
-    
-    const item = animation.keyframes[key];
-
-    for (let property in item)
-    {
-      const value = item[property];
-
-      // corrects vender prefixes and
-      // transform camelCase to no-caps
-      property = processProperty(property);
-
-      declarationsList.push(`${property}: ${value}`);
-    }
-
-    keyframes.push(`${key} { ${declarationsList.join('; ')}; }`);
-  }
-
-  addToStyleSheet(`@keyframes ${animationName}`, keyframes.join(' '));
-
-  if (animation.duration || animation.timingFunction || animation.delay || animation.iterationCount || animation.direction || animation.fillMode)
-    return `${animationName} ${duration} ${timingFunction} ${delay} ${iterationCount} ${direction} ${fillMode}`;
-  else
-    return animationName;
-}
-
-export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
+export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : { [key in keyof T]: string }
 {
   const classNames = {};
 
@@ -204,7 +209,7 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : T
     setStyle(className, rule);
   }
 
-  return classNames as T;
+  return classNames as { [key in keyof T]: string };
 }
 
 export function setStyle(selector: string, style: StyleSheet | FlcssProperties) : void
@@ -227,6 +232,7 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
   {
     const item = universalStyleSheet.cssRules.item(index);
 
+    // handle at-media rules
     if (item instanceof CSSMediaRule)
     {
       existingRules[`@media ${item.media.mediaText}`] = { index, media: item, item: item.cssRules[0] };
