@@ -7,8 +7,7 @@ require('construct-style-sheets-polyfill');
 
 const universalStyleSheet = new CSSStyleSheet();
 
-// istanbul ignore next
-window.addEventListener('DOMContentLoaded', () =>
+window.addEventListener('DOMContentLoaded', /* istanbul ignore next */ () =>
 {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -22,7 +21,7 @@ function isValue(obj: unknown)
 
 function random() : string
 {
-  // istanbul ignore next
+  // istanbul ignore if
   if (process.env.NODE_ENV !== 'test')
     return Math.random().toString(36).substr(2, 7);
   else
@@ -230,12 +229,14 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
 
   for (let index = 0; index < universalStyleSheet.cssRules.length; index++)
   {
-    const item = universalStyleSheet.cssRules.item(index);
+    const item = universalStyleSheet.cssRules[index];
 
     // handle at-media rules
     if (item instanceof CSSMediaRule)
     {
-      existingRules[`@media ${item.media.mediaText}`] = { index, media: item, item: item.cssRules[0] };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      existingRules[`${item.cssRules[0].selectorText}@media ${item.media.mediaText}`] = { index, media: item, item: item.cssRules[0] };
     }
     else
     {
@@ -244,10 +245,18 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
       existingRules[item.selectorText] = { index, item };
     }
   }
-
+  
   for (const { selector, declarations, block } of parsedRules)
   {
-    if (!existingRules[selector])
+    let key = selector;
+
+    // handle at media
+    if (key.startsWith('@media'))
+    {
+      key = block.substr(0, block.indexOf('{')).trim() + key;
+    }
+    
+    if (!existingRules[key])
     {
       // add it to the stylesheet
       addToStyleSheet(selector, block);
@@ -255,7 +264,7 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
     // but if it exists. update it
     else
     {
-      const { item, media, index } = existingRules[selector];
+      const { item, media, index } = existingRules[key];
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
@@ -263,18 +272,24 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
 
       declarations.forEach((declaration) =>
       {
+        // istanbul ignore if
         // if browser support CSS Type OM Level 1
         if (styleMap)
+        {
           styleMap.set(declaration.property, declaration.value);
+        }
+        // browser does not support CSS Type OM Level 1
         else
-          // if browser does not support CSS Type OM Level 1
+        {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
           // this should change the value of item.cssText which
           // is used later to replace the rule with the new one
           item.style[declaration.property] = declaration.value;
+        }
       });
 
+      // istanbul ignore else
       // if browser does not support CSS Type OM Level 1
       // this is polyfilled by replacing the entire rule
       if (!styleMap)
@@ -285,10 +300,8 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
 
         if (!media)
         {
-          block = block.replace(selector, '');
-
           block = block.substr(block.indexOf('{') + 1);
-          block = block.substr(0, block.lastIndexOf('}'));
+          block = block.substr(0, block.lastIndexOf('}')).trim();
         }
 
         addToStyleSheet(selector, block);
@@ -299,10 +312,10 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
 
 function addToStyleSheet(selector: string, style: string)
 {
-  return universalStyleSheet.addRule(selector, style);
+  universalStyleSheet.addRule(selector, style);
 }
 
 function removeFromStyleSheet(index: number)
 {
-  return universalStyleSheet.removeRule(index);
+  universalStyleSheet.removeRule(index);
 }

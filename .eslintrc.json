@@ -2,17 +2,20 @@
   "root": true,
   "env": {
     "node": true,
-    "browser": true,
-    "es6": true
+    "es6": true,
+    "browser": true
   },
   "plugins": [
+    "jest",
     "security",
     "@typescript-eslint"
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:security/recommended"
+    "plugin:jest/style",
+    "plugin:jest/recommended",
+    "plugin:security/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
