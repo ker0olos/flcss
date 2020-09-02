@@ -9,7 +9,6 @@ const universalStyleSheet = new CSSStyleSheet();
 
 window.addEventListener('DOMContentLoaded', /* istanbul ignore next */ () =>
 {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   document.adoptedStyleSheets = [ universalStyleSheet ];
 });
@@ -167,7 +166,7 @@ function parse(selector: string, style: StyleSheet | FlcssProperties)
   return rules;
 }
 
-export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : { [key in keyof T]: string }
+export function createStyle<T>(styles: T & StyleSheet) : T & { [key in keyof T]: string }
 {
   const classNames = {};
 
@@ -208,7 +207,8 @@ export function createStyle<T extends StyleSheet>(styles: T | StyleSheet) : { [k
     setStyle(className, rule);
   }
 
-  return classNames as { [key in keyof T]: string };
+  //@ts-ignore
+  return classNames;
 }
 
 export function setStyle(selector: string, style: StyleSheet | FlcssProperties) : void
@@ -234,13 +234,11 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
     // handle at-media rules
     if (item instanceof CSSMediaRule)
     {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       existingRules[`${item.cssRules[0].selectorText}@media ${item.media.mediaText}`] = { index, media: item, item: item.cssRules[0] };
     }
     else
     {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       existingRules[item.selectorText] = { index, item };
     }
@@ -266,7 +264,6 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
     {
       const { item, media, index } = existingRules[key];
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       const styleMap = item.styleMap;
 
@@ -281,7 +278,6 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
         // browser does not support CSS Type OM Level 1
         else
         {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
           // this should change the value of item.cssText which
           // is used later to replace the rule with the new one

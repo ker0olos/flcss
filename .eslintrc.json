@@ -48,6 +48,8 @@
     "func-call-spacing": ["error", "never"],
     "key-spacing": ["error", { "afterColon": true }],
     "keyword-spacing": ["error", { "before": true, "after": true }],
-    "no-trailing-spaces": ["error", { "skipBlankLines": true }]
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }],
+
+    "@typescript-eslint/ban-ts-comment": 0
   }
 }
