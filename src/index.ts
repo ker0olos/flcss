@@ -22,7 +22,7 @@ function isValue(obj: unknown)
 function random() : string
 {
   // istanbul ignore if
-  if (process.env.NODE_ENV !== 'test')
+  if (process.env.NODE_ENV !== 'FLCSS_TEST')
     return Math.random().toString(36).substr(2, 7);
   else
     return 'test';

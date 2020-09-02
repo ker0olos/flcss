@@ -96,6 +96,8 @@ global.window = {
   addEventListener: () => undefined
 };
 
+process.env.NODE_ENV = 'FLCSS_TEST';
+
 import { setStyle, createStyle, updateStyle, createAnimation } from '../src/index';
 
 beforeEach(() =>
