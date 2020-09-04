@@ -135,9 +135,7 @@ export interface FlcssProperties extends CSSProperties, Pseudos {
   extend?: string
 }
 
-export type StyleSheet = {
-  [key: string]: FlcssProperties | StyleSheet
-}
+export type StyleSheet = { [key in string]: FlcssProperties | StyleSheet };
 
 type Keyframes = {
   [key: string]: CSSProperties

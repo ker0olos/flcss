@@ -166,7 +166,7 @@ function parse(selector: string, style: StyleSheet | FlcssProperties)
   return rules;
 }
 
-export function createStyle<T>(styles: T & StyleSheet) : T & { [key in keyof T]: string }
+export function createStyle<T>(styles: { [key in keyof T]: StyleSheet & FlcssProperties } | StyleSheet) : { [key in keyof T]: string }
 {
   const classNames = {};
 
