@@ -1,5 +1,5 @@
 [![npm (tag)](https://img.shields.io/npm/v/flcss/latest)](http://npmjs.com/package/flcss)
-![Test](https://github.com/ker0olos/flcss/workflows/Test/badge.svg?branch=master) 
+![Testing](https://github.com/ker0olos/flcss/workflows/Testing/badge.svg?branch=master) 
 ![CodeQL](https://github.com/ker0olos/flcss/workflows/CodeQL/badge.svg)
 [![codecov](https://codecov.io/gh/ker0olos/flcss/branch/master/graph/badge.svg)](https://codecov.io/gh/ker0olos/flcss)
 
