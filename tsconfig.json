@@ -1,0 +1,11 @@
+{
+  "include": ["src/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "outDir": "build",
+    "lib": ["ES2015","DOM",],
+    "types": [ "jest", "node" ],
+    "sourceMap": true,
+    "esModuleInterop": true
+  }
+}
