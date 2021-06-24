@@ -5,6 +5,7 @@
     "outDir": "build",
     "lib": ["ES2015","DOM",],
     "types": [ "jest", "node" ],
+    "declaration": true,
     "sourceMap": true,
     "esModuleInterop": true
   }
