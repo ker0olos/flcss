@@ -19,7 +19,7 @@
 
 <br>
 
-A bad attempt of CSS-in-JS.
+A attempt of CSS-in-JS.
 
 It supports all of the things: selectors, pseudo-classes, pseudo-elements, attributes, vendor prefixes, media queries and animations.
 
