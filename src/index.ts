@@ -261,7 +261,7 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
     // handle at media
     if (key.startsWith('@media'))
     {
-      key = block.substr(0, block.indexOf('{')).trim() + key;
+      key = block.substring(0, block.indexOf('{')).trim() + key;
     }
     
     if (!existingRules[key])
@@ -306,8 +306,8 @@ export function updateStyle(classname: string, style: StyleSheet | FlcssProperti
 
         if (!media)
         {
-          block = block.substr(block.indexOf('{') + 1);
-          block = block.substr(0, block.lastIndexOf('}')).trim();
+          block = block.substring(block.indexOf('{') + 1);
+          block = block.substring(0, block.lastIndexOf('}')).trim();
         }
 
         addToStyleSheet(selector, block);

@@ -46,11 +46,11 @@ class CSSMediaRule
       mediaText: selector.replace('@media', '').trim()
     };
 
-    const childSelector = style.substr(0, style.indexOf('{')).trim();
+    const childSelector = style.substring(0, style.indexOf('{')).trim();
 
-    style = style.substr(style.indexOf('{') + 1);
+    style = style.substring(style.indexOf('{') + 1);
 
-    style = style.substr(0, style.lastIndexOf('}')).trim();
+    style = style.substring(0, style.lastIndexOf('}')).trim();
 
     this.cssRules = [ new CSSRule(childSelector, style) ];
   }
