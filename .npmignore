@@ -6,6 +6,6 @@
 
 jest.config.js
 
-coverage
 src
+coverage
 test

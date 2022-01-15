@@ -55,14 +55,14 @@ class CSSMediaRule
     this.cssRules = [ new CSSRule(childSelector, style) ];
   }
 
-  cssRules = []
+  cssRules = [];
 
-  media = {}
+  media = {};
 }
 
 class CSSStyleSheet
 {
-  cssRules = []
+  cssRules = [];
 
   addRule = jest.fn().mockImplementation((selector: string, style: string) =>
   {
@@ -70,19 +70,22 @@ class CSSStyleSheet
       this.cssRules.push(new CSSMediaRule(selector, style));
     else
       this.cssRules.push(new CSSRule(selector, style));
-  })
+  });
 
   removeRule = jest.fn((index: number) =>
   {
     this.cssRules.splice(index, 1);
-  })
+  });
 }
 
 const stylesheet = new CSSStyleSheet();
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
-global.CSSStyleSheet = () => stylesheet;
+global.CSSStyleSheet = function()
+{
+  return stylesheet;
+};
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
@@ -131,8 +134,8 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(2);
 
-    expect(styles.wrapper).toEqual('flcss-wrapper-test');
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.wrapper).toBe('flcss-wrapper-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -169,7 +172,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
 
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -198,7 +201,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -229,7 +232,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -261,8 +264,8 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(2);
   
-    expect(styles.red).toEqual('flcss-red-test');
-    expect(styles.blue).toEqual('flcss-blue-test');
+    expect(styles.red).toBe('flcss-red-test');
+    expect(styles.blue).toBe('flcss-blue-test');
   
     // generated styles
   
@@ -293,7 +296,7 @@ describe('Test FLCSS', () =>
   
     // return values
   
-    expect(animation).toEqual('flcss-animation-test');
+    expect(animation).toBe('flcss-animation-test');
   
     // generated styles
   
@@ -326,7 +329,7 @@ describe('Test FLCSS', () =>
   
     // return values
   
-    expect(animation).toEqual('flcss-animation-test 1s ease-in-out 5s 1 normal forwards');
+    expect(animation).toBe('flcss-animation-test 1s ease-in-out 5s 1 normal forwards');
   
     // generated styles
   
@@ -349,7 +352,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // update style
   
@@ -385,7 +388,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // update style
   
@@ -417,7 +420,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // update style
   
@@ -458,7 +461,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // update style
   
@@ -503,7 +506,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
   
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // update style
   
@@ -571,7 +574,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
 
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -588,7 +591,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
 
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     // generated styles
   
@@ -608,7 +611,7 @@ describe('Test FLCSS', () =>
   
     expect(Object.keys(styles)).toHaveLength(1);
 
-    expect(styles.container).toEqual('flcss-container-test');
+    expect(styles.container).toBe('flcss-container-test');
   
     updateStyle(styles.container, {});
   

@@ -3,4 +3,9 @@
 node_modules
 
 coverage
-build
+
+!jest.config.js
+
+/*.js
+/*.map
+/*.d.ts

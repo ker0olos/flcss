@@ -1,3 +1,26 @@
+### CHANGES IN v2.4.0
+
+- A React hook to allow you to easily update styles
+
+```jsx
+import React, { useState } from 'react';
+
+import { useStyles } from 'flcss/react';
+
+const App = () => {
+  const [ color, setColor ] = useState('red');
+
+  const styles = useStyles({
+    box: {
+      padding: '15px',
+      backgroundColor: color
+    }
+  });
+
+  return <div className={ styles.box }/>;
+}
+```
+
 ### CHANGES IN v2.0.0
   - less code means faster performance (probably).
   - slightly better error handling.

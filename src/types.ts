@@ -139,8 +139,9 @@ export type StyleSheet = { [key in string]: FlcssProperties | StyleSheet };
 
 type Keyframes = {
   [key: string]: CSSProperties
-  'from'?: CSSProperties
-  'to'?: CSSProperties
+} & {
+  from?: CSSProperties
+  to?: CSSProperties
 }
 
 export type Animation = {
