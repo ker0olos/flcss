@@ -1,6 +1,7 @@
 {
   "name": "flcss",
-  "version": "2.4.0-0",
+  "version": "2.5.0",
+  "type": "module",
   "description": "A attempt at CSS-in-JS",
   "main": "index.js",
   "types": "index.d.ts",
