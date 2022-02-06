@@ -2,7 +2,7 @@
 ![Testing](https://github.com/ker0olos/flcss/workflows/Testing/badge.svg?branch=master) 
 [![codecov](https://codecov.io/gh/ker0olos/flcss/branch/master/graph/badge.svg)](https://codecov.io/gh/ker0olos/flcss)
 
-A attempt of CSS-in-JS.
+A bleeding-edge CSS-in-JS library.
 
 It supports all of the things: selectors, pseudo-classes, pseudo-elements, attributes, vendor prefixes, media queries and animations.
 
