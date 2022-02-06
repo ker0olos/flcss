@@ -2,7 +2,7 @@
   "name": "flcss",
   "version": "2.5.0",
   "type": "module",
-  "description": "A attempt at CSS-in-JS",
+  "description": "A bleeding-edge CSS-in-JS library",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -17,6 +17,7 @@
     "url": "git+https://github.com/ker0olos/flcss.git"
   },
   "keywords": [
+    "react",
     "css-in-js",
     "css"
   ],
