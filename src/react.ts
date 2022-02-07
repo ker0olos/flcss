@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { createStyle, updateStyle } from './index';
 
-import { FlcssProperties, StyleSheet } from './types';
+import type { FlcssProperties, StyleSheet } from './types';
 
 export function useStyles<T>(styles: { [key in keyof T]: StyleSheet & FlcssProperties } | StyleSheet) : { [key in keyof T]: string }
 {

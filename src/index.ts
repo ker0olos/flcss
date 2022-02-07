@@ -3,24 +3,13 @@
 // polyfill construct stylesheets
 import 'construct-style-sheets-polyfill';
 
-import { FlcssProperties, StyleSheet, Animation } from './types';
+import type { FlcssProperties, StyleSheet, Animation } from './types';
 
 const universalStyleSheet = new CSSStyleSheet();
 
 window.addEventListener('DOMContentLoaded', /* istanbul ignore next */ () =>
 {
-  try
-  {
-    // @ts-ignore
-    if (!document.adoptedStyleSheets.includes(universalStyleSheet))
-      // @ts-ignore
-      document.adoptedStyleSheets.push(universalStyleSheet);
-  }
-  catch
-  {
-    // @ts-ignore
-    document.adoptedStyleSheets = [ universalStyleSheet ];
-  }
+  document.adoptedStyleSheets = [ universalStyleSheet ];
 });
 
 function random() : string
