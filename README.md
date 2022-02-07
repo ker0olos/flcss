@@ -1,8 +1,8 @@
 [![npm (tag)](https://img.shields.io/npm/v/flcss/latest)](http://npmjs.com/package/flcss)
-![unit-tests](https://github.com/ker0olos/flcss/workflows/unit-tests/badge.svg?branch=master) 
-![chrome](https://github.com/ker0olos/flcss/workflows/chromium/badge.svg?branch=master) 
-![firefox](https://github.com/ker0olos/flcss/workflows/firefox/badge.svg?branch=master) 
-![safari](https://github.com/ker0olos/flcss/workflows/webkit/badge.svg?branch=master) 
+![unit-tests](https://github.com/ker0olos/flcss/actions/workflows/unit-tests.yml/badge.svg) 
+![chrome](https://github.com/ker0olos/flcss/actions/workflows/chrome.yml/badge.svg) 
+![firefox](https://github.com/ker0olos/flcss/actions/workflows/firefox.yml/badge.svg) 
+![safari](https://github.com/ker0olos/flcss/actions/workflows/safari.yml/badge.svg) 
 [![codecov](https://codecov.io/gh/ker0olos/flcss/branch/master/graph/badge.svg)](https://codecov.io/gh/ker0olos/flcss)
 
 A bleeding-edge CSS-in-JS library.

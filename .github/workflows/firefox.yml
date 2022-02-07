@@ -7,16 +7,20 @@ on:
     - main
     
 jobs:
-  Might:
+  might:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:focal
+    container:
+      image: mcr.microsoft.com/playwright:focal
+      options: --user might
     steps:
       - uses: actions/checkout@main
       - uses: actions/setup-node@main
         with:
           node-version: '16.x'
       - name: Install Dependencies
-        run: yarn install
+        run: yarn
+      - name: Build Flcss
+        run: yarn build
       - name: Run Tests
         run: yarn might --firefox
       - name: Upload Errors
