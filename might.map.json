@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "title": "Create Styles",
+      "steps": [
+        {
+          "action": "wait",
+          "value": 2
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+name: firefox
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+    
+jobs:
+  Might:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:focal
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        run: yarn install
+      - name: Run Tests
+        run: yarn might --firefox
+      - name: Upload Errors
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: errors
+          path: might.error.*.*

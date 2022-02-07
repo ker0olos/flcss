@@ -1,12 +1,15 @@
 [![npm (tag)](https://img.shields.io/npm/v/flcss/latest)](http://npmjs.com/package/flcss)
-![Testing](https://github.com/ker0olos/flcss/workflows/Testing/badge.svg?branch=master) 
+![unit-tests](https://github.com/ker0olos/flcss/workflows/unit-tests/badge.svg?branch=master) 
+![chrome](https://github.com/ker0olos/flcss/workflows/chromium/badge.svg?branch=master) 
+![firefox](https://github.com/ker0olos/flcss/workflows/firefox/badge.svg?branch=master) 
+![safari](https://github.com/ker0olos/flcss/workflows/webkit/badge.svg?branch=master) 
 [![codecov](https://codecov.io/gh/ker0olos/flcss/branch/master/graph/badge.svg)](https://codecov.io/gh/ker0olos/flcss)
 
 A bleeding-edge CSS-in-JS library.
 
 It supports all of the things: selectors, pseudo-classes, pseudo-elements, attributes, vendor prefixes, media queries and animations.
 
-It also comes with custom features like extending.
+It also comes with custom features like extending and react hooks support.
 
 ## Installation
 
